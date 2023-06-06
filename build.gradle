@@ -1,0 +1,130 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+buildscript {
+    repositories {
+        if (project.hasProperty('maven') && maven == 'maven.aliyun.com')
+            maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        else
+            mavenCentral()
+    }
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.0.6'
+	id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.incarcloud'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+    if (project.hasProperty('maven') && maven == 'maven.aliyun.com')
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+    else
+        mavenCentral()
+}
+
+dependencies {
+	implementation ('org.springframework.boot:spring-boot-starter-web:3.0.6'){
+		exclude(module: "spring-boot-starter-logging")
+	}
+	implementation 'org.slf4j:slf4j-api:2.0.7'
+	implementation 'org.apache.logging.log4j:log4j-core'
+	implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
+	implementation 'org.yaml:snakeyaml:2.0'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:3.0.6'
+
+	testImplementation ('org.springframework.boot:spring-boot-starter-test:3.0.6'){
+		exclude(module: "spring-boot-starter-logging")
+	}
+}
+
+def markGitVer = tasks.register('markGitVer') {
+    doLast {
+        def git = "git -C " + projectDir + " "
+        def branch = (git + "symbolic-ref --short HEAD").execute().text.trim()
+        def rev = (git + "rev-list --count HEAD").execute().text.trim()
+        def hash = (git + "rev-parse --short HEAD").execute().text.trim()
+        def hash160 = (git + "rev-parse HEAD").execute().text.trim()
+        def tmBuilding = System.currentTimeMillis().toString()
+
+        def isDirty = (git + "diff-index --quiet HEAD").execute().waitFor()
+        if(isDirty != 0) hash += "-dirty"
+        
+        setVersion(branch + "." + rev + "@" + hash)
+        println("\tMark Git Version: " + getVersion())
+
+        def packageName = "com.incarcloud.cuckoo".replace('.', '/')
+        def javaFile = new File(projectDir, "src/main/java/$packageName/GitVer.jav_").text
+        javaFile = javaFile
+                .replace("\$branch\$", branch)
+                .replace("\$rev\$", rev)
+                .replace("\$hash\$", hash)
+                .replace("\$hash160\$", hash160)
+                .replace("\$tmBuilding\$", tmBuilding)
+
+        def writer = new PrintWriter(new File(projectDir, "src/main/java/$packageName/GitVer.java"))
+        writer.print(javaFile)
+        writer.close()
+    }
+}
+
+def npmBuild = tasks.register('npmBuild', Exec) {
+    workingDir("$rootDir/src/web")
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine("cmd.exe", "/C", "npm run build")
+    } else {
+        commandLine("npm", "run", "build")
+    }
+}
+
+processResources {
+    dependsOn npmBuild
+}
+
+compileJava {
+    dependsOn markGitVer
+    options.encoding = 'utf-8'
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+compileTestJava {
+    options.encoding = 'utf-8'
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation' << '-Xdiags:verbose'
+}
+
+bootRun {
+    systemProperties(System.getProperties())
+}
+
+def cleanJars= tasks.register('cleanJars') {
+    def outputDir = file("$buildDir/libs")
+    doLast {
+        delete fileTree(dir: outputDir, include: '*.jar')
+    }
+}
+
+bootJar{
+    dependsOn cleanJars
+}
+
+test {
+    systemProperties(System.getProperties())
+    useJUnitPlatform()
+
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+    }
+
+    if(project.hasProperty("testCaseOnly")) {
+        filter {
+            includeTestsMatching testCaseOnly
+        }
+    }
+}
+
+defaultTasks 'assemble'

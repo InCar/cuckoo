@@ -1,0 +1,11 @@
+# Logging
+logging.config: classpath:log4j2.xml
+
+# Tomcat
+server:
+  address: 127.0.0.1
+  port: 8147
+  compression:
+    enabled: true
+    mime-types: application/javascript, text/css
+    min-response-size: 1024

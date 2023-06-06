@@ -1,0 +1,28 @@
+package com.incarcloud.cuckoo;
+
+public class GitVer {
+    private String _branch = "$branch$";
+    private String _rev = "$rev$";
+    private String _hash = "$hash$";
+    private String _hash160 = "$hash160$";
+    private long _tmBuilding = $tmBuilding$L;
+
+    public String get_branch() {
+        return _branch;
+    }
+
+    public String get_rev() {
+        return _rev;
+    }
+
+    public String get_hash() {
+        return _hash;
+    }
+
+    public long get_tmBuilding() {
+        return _tmBuilding;
+    }
+
+    public String getVersion(){ return _branch + "." + _rev + "@" + _hash; }
+    public String getSourceLink(){ return "https://github.com/InCar/cuckoo/commit/" + _hash160; }
+}

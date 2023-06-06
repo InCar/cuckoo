@@ -1,0 +1,27 @@
+# vscode
+.vscode
+.vs
+
+# java
+.gradle
+.idea
+build
+src/main/resources/static
+
+gradle.properties
+application-*.yml
+log4j2-*.xml
+vite.config-*.ts
+
+# Log
+*.log
+*.local
+
+# mac
+.DS_Store
+
+# npm packages
+node_modules
+
+# generated project version
+GitVer.java
