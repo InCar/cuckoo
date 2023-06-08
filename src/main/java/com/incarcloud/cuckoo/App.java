@@ -33,8 +33,9 @@ public class App implements CommandLineRunner {
     private void loggingBasicInfo() {
         String address = env.getProperty("server.address");
         String port = env.getProperty("server.port");
+        String webAppType = env.getProperty("spring.main.web-application-type");
 
-        if(port != null) {
+        if((webAppType == null || !webAppType.equalsIgnoreCase("NONE")) && port != null) {
             s_logger.info("WebServer is listening on \033[0;34mhttp://{}\033[0m\033[0;96m:{}\033[0m",
                     address, port);
         }

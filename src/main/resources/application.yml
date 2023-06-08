@@ -9,3 +9,11 @@ server:
     enabled: true
     mime-types: application/javascript, text/css
     min-response-size: 1024
+
+# cuckoo
+cuckoo:
+  target:
+    receiver: MQTT # TCP, MQTT, kafka
+    host: apow.incars.com.cn
+    port: 1883
+    topic: cuckooTest

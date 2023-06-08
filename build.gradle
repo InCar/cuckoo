@@ -35,6 +35,9 @@ dependencies {
 	implementation 'org.apache.logging.log4j:log4j-slf4j2-impl'
 	implementation 'org.yaml:snakeyaml:2.0'
 
+    // MQTT
+    implementation 'org.eclipse.paho:org.eclipse.paho.mqttv5.client:1.2.5'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools:3.0.6'
 
 	testImplementation ('org.springframework.boot:spring-boot-starter-test:3.0.6'){
