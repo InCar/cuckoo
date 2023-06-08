@@ -1,0 +1,22 @@
+.home-container{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+
+    .target-block{
+        margin: 0.5em;
+        border: 1px dotted #000;
+        border-radius: 0.5em;
+        min-width: 300px;
+        min-height: 300px;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+
+        .title{
+            color: darkblue;
+            text-align: center;
+            font-weight: bold;
+        }
+    }
+}
