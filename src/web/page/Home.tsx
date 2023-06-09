@@ -59,7 +59,6 @@ export const Home = () => {
                 </a>
                 {version}
             </div>
-            <div className="version"><a href={sourceLink}>{version}</a></div>
         </div>
     );
 }
