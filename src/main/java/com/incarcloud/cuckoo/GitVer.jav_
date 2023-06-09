@@ -24,5 +24,5 @@ public class GitVer {
     }
 
     public String getVersion(){ return _branch + "." + _rev + "@" + _hash; }
-    public String getSourceLink(){ return "https://github.com/InCar/cuckoo/commit/" + _hash160; }
+    public String getSourceLink(){ return "https://github.com/InCar/cuckoo/tree/" + _hash160; }
 }

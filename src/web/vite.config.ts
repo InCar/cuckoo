@@ -18,9 +18,8 @@ export default defineConfig({
         react()
     ],
     resolve: {
-        // 路径别名
         alias: {
-            '~': path.resolve(__dirname, './') // 根路径
+            '~': path.resolve(__dirname),
         }
     },
     server: {
@@ -29,7 +28,6 @@ export default defineConfig({
         open: true,
         cors: true,
         // https: false,
-        // 代理跨域（mock 不需要配置，这里只是个事列）
         proxy: {
             '/api': apiServer
         }
