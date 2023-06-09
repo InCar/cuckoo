@@ -23,7 +23,6 @@ export const Home = () => {
         if(isSwitchOn){
             const data = await apx.stop();
             setIsSwitchOn(data.isRunning);
-            console.log(data);
         }else{
             const data = await apx.start();
             setIsSwitchOn(data.isRunning);
@@ -60,6 +59,7 @@ export const Home = () => {
                 </a>
                 {version}
             </div>
+            <div className="version"><a href={sourceLink}>{version}</a></div>
         </div>
     );
 }
