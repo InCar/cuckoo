@@ -13,24 +13,34 @@ export const Home = () => {
             const data = await apx.fetchVersion();
             setVersion(data.version);
             setSourceLink(data.sourceLink);
+
+            const state = await apx.fetchState();
+            setIsSwitchOn(state.isRunning);
         })();
     }, []);
 
-    const handleSwitchChange = () => {
-        setIsSwitchOn(!isSwitchOn);
+    const handleSwitchChange = async () => {
+        if(isSwitchOn){
+            const data = await apx.stop();
+            setIsSwitchOn(data.isRunning);
+            console.log(data);
+        }else{
+            const data = await apx.start();
+            setIsSwitchOn(data.isRunning);
+        }
     };
 
     return (
         <div className="home-container">
             <div className="targets">
                 <div className="target-block">
-                        <span className="title">Kafka</span>
+                        <span className="title">SAIC-Kafka</span>
                         <div className="content">
                             <FormControlLabel control={<Switch disabled={true} />} label="ON/OFF" />
                         </div>
                 </div>
                 <div className="target-block">
-                    <span  className="title">MQTT</span>
+                    <span  className="title">APOW-MQTT</span>
                     <div className="content">
                         <FormControlLabel control={<Switch checked={isSwitchOn} onChange={handleSwitchChange} />} label="ON/OFF" />
                     </div>
