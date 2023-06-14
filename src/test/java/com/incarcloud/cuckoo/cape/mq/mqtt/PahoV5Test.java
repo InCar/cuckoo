@@ -34,7 +34,7 @@ public class PahoV5Test {
             int count = 1000000;
             var latch = new CountDownLatch(count);
 
-            pahoV5.recvAsync(mqttArgs.getTopic(), (msg) -> {
+            pahoV5.recvAsyncAsString(mqttArgs.getTopic(), (msg) -> {
                 atomFly.decrementAndGet();
                 //s_logger.info("recv msg: {}", msg);
                 ref.msgRecved = msg;

@@ -2,16 +2,21 @@ package com.incarcloud.cuckoo.service.apow;
 
 import com.incarcloud.cuckoo.cape.mq.mqtt.PahoV5;
 import com.incarcloud.cuckoo.service.ApowSimArgs;
+import com.incarcloud.cuckoo.service.IDev;
 import com.incarcloud.cuckoo.service.ISim;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // 以固定速率发送同样的数据
 public class SimpleSim implements ISim {
     private final static Logger s_logger = LoggerFactory.getLogger(SimpleSim.class);
     private final float MAX_SPEED = 100.0f; // 每秒发送的数据包数
+
+    private final ArrayList<IDev> listDev = new ArrayList<>();
     private final ApowSimArgs taskArgs;
 
     private AtomicBoolean atomCanStop = new AtomicBoolean(false);
@@ -19,6 +24,9 @@ public class SimpleSim implements ISim {
 
     public SimpleSim(ApowSimArgs args){
         this.taskArgs = args;
+
+        DevZLAN8308 devZLAN8308 = new DevZLAN8308("ZLAN8308-1", ApowDevTypes.ElectricMeter, "1", "ZLAN8308");
+        listDev.add(devZLAN8308);
     }
 
     @Override
@@ -58,7 +66,11 @@ public class SimpleSim implements ISim {
                 count++;
                 if(count < 0) count = 0; // 避免长时间运行后溢出
 
-                pahoV5.sendAsync(this.taskArgs.topic, "Hello");
+                DevZLAN8308 devZLAN8308 = (DevZLAN8308)listDev.get(0);
+                devZLAN8308.setAcquisitionTime(Instant.now());
+                var buf = devZLAN8308.makeDataPackage();
+
+                pahoV5.sendAsync(this.taskArgs.topic, buf);
 
                 if(count % 100 == 0){
                     float speed = MAX_SPEED;

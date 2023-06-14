@@ -1,20 +1,24 @@
 package com.incarcloud.cuckoo.service.apow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.incarcloud.cuckoo.service.IDev;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 // 卓岚ZLAN8308. RS485\modbus RTU\4G模块
-public class DevZLAN8308 {
+public class DevZLAN8308 implements IDev {
     private final String deviceID;
     private final ApowDevTypes type;
     private final String orgId;
     private final String tag;
 
-    private final static DateTimeFormatter c_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final static DateTimeFormatter c_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
 
     private Instant acquisitionTime;
 
@@ -49,5 +53,16 @@ public class DevZLAN8308 {
         root.set("data", data);
 
         return root;
+    }
+
+    @Override
+    public byte[] makeDataPackage() {
+        ObjectNode data = ApowJsonMapper.getMapper().createObjectNode();
+        JsonNode root = this.toJsonNode(data);
+        try {
+            return ApowJsonMapper.getMapper().writeValueAsBytes(root);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

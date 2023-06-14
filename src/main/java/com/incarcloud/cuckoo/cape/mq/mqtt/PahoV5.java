@@ -13,7 +13,7 @@ public class PahoV5 implements MqttCallback, AutoCloseable {
     private final static Logger s_logger = LoggerFactory.getLogger(PahoV5.class);
     private final MqttAsyncClient mqttAsyncClient;
 
-    private Consumer<String> onRecv = null;
+    private Consumer<byte[]> onRecv = null;
 
     public PahoV5(String host, int port, String clientId){
         try {
@@ -52,24 +52,36 @@ public class PahoV5 implements MqttCallback, AutoCloseable {
         }
     }
 
-    public IMqttToken sendAsync(String topic, String message) {
+    public IMqttToken sendAsync(String topic, byte[] message){
         try {
             int qos = 0; // 0: 至多一次,有可能丢失; 1: 至少一次,有可能重复; 2: 有且只有一次
             boolean retained = false;
-            return this.mqttAsyncClient.publish(topic, message.getBytes(), qos, retained);
+            return this.mqttAsyncClient.publish(topic, message, qos, retained);
         }
         catch (MqttException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public IMqttToken recvAsync(String topic, Consumer<String> onRecv) {
+    public IMqttToken sendAsync(String topic, String message) {
+        return sendAsync(topic, message.getBytes());
+    }
+
+    public IMqttToken recvAsync(String topic, Consumer<byte[]> onRecv){
         try {
             this.onRecv = onRecv;
             return this.mqttAsyncClient.subscribe(topic, 0);
-        } catch (MqttException e) {
+        }
+        catch (MqttException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public IMqttToken recvAsyncAsString(String topic, Consumer<String> onRecv) {
+        return recvAsync(topic, (buf) -> {
+            var str = new String(buf);
+            onRecv.accept(str);
+        });
     }
 
     @Override
@@ -84,9 +96,9 @@ public class PahoV5 implements MqttCallback, AutoCloseable {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        String msg = new String(message.getPayload());
+        var buf = message.getPayload();
         if(this.onRecv != null) {
-            this.onRecv.accept(msg);
+            this.onRecv.accept(buf);
         }
         else {
             s_logger.info("MQTT message arrived, topic: {}, message: {}", topic, message);

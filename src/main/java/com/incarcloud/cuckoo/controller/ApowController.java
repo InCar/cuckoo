@@ -1,6 +1,7 @@
 package com.incarcloud.cuckoo.controller;
 
 import com.incarcloud.cuckoo.dto.MqttArgs;
+import com.incarcloud.cuckoo.dto.RunningState;
 import com.incarcloud.cuckoo.service.ApowSimArgs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,3 @@ public class ApowController {
     }
 }
 
-class RunningState{
-    public boolean isRunning;
-}
