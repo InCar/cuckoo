@@ -1,6 +1,6 @@
 # test only properties
-cuckoo.test:
-    PahoV5Test:
+cuckoo:
+    mqtt:
         host: apow.incars.com.cn
         port: 7023
         topic: cuckooTest

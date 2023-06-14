@@ -20,6 +20,9 @@ vite.config-*.ts
 # mac
 .DS_Store
 
+# Paho lock file
+.lck
+
 # npm packages
 node_modules
 

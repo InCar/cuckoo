@@ -12,8 +12,14 @@ server:
 
 # cuckoo
 cuckoo:
-  target:
-    receiver: MQTT # TCP, MQTT, kafka
+  kafka:
+    host: apow.incars.com.cn
+    port: 9092
+    topic: cuckooTest
+  mqtt:
     host: apow.incars.com.cn
     port: 1883
     topic: cuckooTest
+  tcp:
+    host: apow.incars.com.cn
+    port: 8614

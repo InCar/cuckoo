@@ -1,8 +1,8 @@
 package com.incarcloud.cuckoo.controller;
 
+import com.incarcloud.cuckoo.dto.MqttArgs;
 import com.incarcloud.cuckoo.service.ApowSimArgs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,14 +18,8 @@ public class ApowController {
     @Autowired
     private ApowService apowService;
 
-    @Value("${cuckoo.target.host}")
-    private String host;
-
-    @Value("${cuckoo.target.port}")
-    private int port;
-
-    @Value("${cuckoo.target.topic}")
-    private String topic;
+    @Autowired
+    private MqttArgs mqttArgs;
 
     @GetMapping("/state")
     public ResponseEntity<?> getState() {
@@ -36,10 +30,7 @@ public class ApowController {
 
     @PutMapping("/start")
     public ResponseEntity<?> start() {
-        var args = new ApowSimArgs();
-        args.host = host;
-        args.port = port;
-        args.topic = topic;
+        var args = new ApowSimArgs(this.mqttArgs);
 
         apowService.start(args);
         return this.getState();
