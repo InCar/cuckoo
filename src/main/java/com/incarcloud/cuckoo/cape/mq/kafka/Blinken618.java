@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,6 +17,9 @@ public class Blinken618 implements AutoCloseable{
 
     private final KafkaProducer<String, byte[]> kafkaProducer;
     private final KafkaConsumer<String, byte[]> kafkaConsumer;
+
+    private Thread m_threadRecv = null;
+    private Consumer<byte[]> onRecv = null;
 
     private final AtomicBoolean m_atomicCanExit = new AtomicBoolean(false);
 
@@ -36,23 +40,35 @@ public class Blinken618 implements AutoCloseable{
         kafkaConsumer = new KafkaConsumer<>(propsRecver);
     }
 
-    void sendAsync(String topic, byte[] message){
+    public void sendAsync(String topic, byte[] message){
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(topic, message);
         kafkaProducer.send(record);
     }
 
-    void recvAsync(String topic, Consumer<byte[]> onRecv){
-        final int POLL_TIMEOUT = 100;
+    public void recvAsync(String topic, Consumer<byte[]> onRecv){
+        this.onRecv = onRecv;
         kafkaConsumer.subscribe(Arrays.asList(topic));
-        while(!m_atomicCanExit.get()){
-            kafkaConsumer.poll(POLL_TIMEOUT).forEach(record -> {
-                onRecv.accept(record.value());
-            });
+        m_atomicCanExit.set(false);
+        m_threadRecv = new Thread(this::doRecv);
+        m_threadRecv.start();
+    }
+
+    public void stopRecv(){
+        try {
+            m_atomicCanExit.set(true);
+            m_threadRecv.join();
+        }
+        catch (InterruptedException e) {
+            s_logger.error("InterruptedException", e);
         }
     }
 
-    void stopRecv(){
-        m_atomicCanExit.set(true);
+    private void doRecv(){
+        while(!m_atomicCanExit.get()){
+            kafkaConsumer.poll(Duration.ofMillis(500)).forEach(record -> {
+                this.onRecv.accept(record.value());
+            });
+        }
     }
 
     @Override
