@@ -16,6 +16,7 @@ cuckoo:
     host: apow.incars.com.cn
     port: 9092
     topic: cuckooTest
+    group-id: cuckooGroup
   mqtt:
     host: apow.incars.com.cn
     port: 1883
