@@ -49,6 +49,10 @@ public class SimSimpleIm2t implements ISim {
 
         try {
             while (!atomCanStop.get()) {
+                var jsonWrap = new JsonWrap();
+                byte[] data = jsonWrap.makeDataPackage();
+                // TODO: 发送数据
+
                 count++;
                 s_logger.info("SimSimpleIm2t.run count={}", count);
                 Thread.sleep(1000);
