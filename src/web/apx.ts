@@ -6,18 +6,33 @@ class APX{
         return resp.data;
     }
 
-    public fetchState = async ()=>{
+    public fetchApowState = async ()=>{
         const resp = await axios.get("/api/apow/state");
         return resp.data;
     }
 
-    public start = async ()=>{
+    public startApow = async ()=>{
         const resp = await axios.put("/api/apow/start");
         return resp.data;
     }
 
-    public stop = async ()=>{
+    public stopApow = async ()=>{
         const resp = await axios.put("/api/apow/stop");
+        return resp.data;
+    }
+
+    public fetchIm2tState = async ()=>{
+        const resp = await axios.get("/api/im2t/state");
+        return resp.data;
+    }
+
+    public startIm2t = async ()=>{
+        const resp = await axios.put("/api/im2t/start");
+        return resp.data;
+    }
+
+    public stopIm2t = async ()=>{
+        const resp = await axios.put("/api/im2t/stop");
         return resp.data;
     }
 }

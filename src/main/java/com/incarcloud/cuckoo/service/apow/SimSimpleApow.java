@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // 以固定速率发送同样的数据
-public class SimpleSim implements ISim {
-    private final static Logger s_logger = LoggerFactory.getLogger(SimpleSim.class);
+public class SimSimpleApow implements ISim {
+    private final static Logger s_logger = LoggerFactory.getLogger(SimSimpleApow.class);
     private final float MAX_SPEED = 100.0f; // 每秒发送的数据包数
 
     private final ArrayList<IDev> listDev = new ArrayList<>();
@@ -22,7 +22,7 @@ public class SimpleSim implements ISim {
     private AtomicBoolean atomCanStop = new AtomicBoolean(false);
     private Thread threadWorking = null;
 
-    public SimpleSim(ApowSimArgs args){
+    public SimSimpleApow(ApowSimArgs args){
         this.taskArgs = args;
 
         DevZLAN8308 devZLAN8308 = new DevZLAN8308("ZLAN8308-1", ApowDevTypes.ElectricMeter, "1", "ZLAN8308");
@@ -37,6 +37,7 @@ public class SimpleSim implements ISim {
         atomCanStop.set(false);
         threadWorking = new Thread(this::run);
         threadWorking.start();
+        s_logger.info("SimSimpleApow.start");
     }
 
     @Override
@@ -46,10 +47,11 @@ public class SimpleSim implements ISim {
             try {
                 threadWorking.join();
             } catch (InterruptedException e) {
-                s_logger.error("SimpleSim.stop", e);
+                s_logger.error("SimSimpleApow.stop", e);
             }
             threadWorking = null;
         }
+        s_logger.info("SimSimpleApow.stop");
     }
 
     private void run(){
@@ -94,7 +96,7 @@ public class SimpleSim implements ISim {
             pahoV5.disconnect();
         }
         catch (Exception e){
-            s_logger.error("SimpleSim.run", e);
+            s_logger.error("SimSimpleApow.run", e);
         }
     }
 }

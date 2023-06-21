@@ -4,7 +4,8 @@ import { apx } from "~/apx";
 import "./home.scss";
 
 export const Home = () => {
-    const [isSwitchOn, setIsSwitchOn] = useState(false);
+    const [isSwitchOnApow, setIsSwitchOnApow] = useState(false);
+    const [isSwitchOnIm2t, setIsSwitchOnIm2t] = useState(false);
     const [version, setVersion] = useState("");
     const [sourceLink, setSourceLink] = useState("");
 
@@ -14,18 +15,31 @@ export const Home = () => {
             setVersion(data.version);
             setSourceLink(data.sourceLink);
 
-            const state = await apx.fetchState();
-            setIsSwitchOn(state.isRunning);
+            const stateApow = await apx.fetchApowState();
+            setIsSwitchOnApow(stateApow.isRunning);
+
+            const stateIm2t = await apx.fetchIm2tState();
+            setIsSwitchOnIm2t(stateIm2t.isRunning);
         })();
     }, []);
 
-    const handleSwitchChange = async () => {
-        if(isSwitchOn){
-            const data = await apx.stop();
-            setIsSwitchOn(data.isRunning);
+    const handleSwitchChangeApow = async () => {
+        if(isSwitchOnApow){
+            const data = await apx.stopApow();
+            setIsSwitchOnApow(data.isRunning);
         }else{
-            const data = await apx.start();
-            setIsSwitchOn(data.isRunning);
+            const data = await apx.startApow();
+            setIsSwitchOnApow(data.isRunning);
+        }
+    };
+
+    const handleSwitchChangeIm2t = async () => {
+        if(isSwitchOnIm2t){
+            const data = await apx.stopIm2t();
+            setIsSwitchOnIm2t(data.isRunning);
+        }else{
+            const data = await apx.startIm2t();
+            setIsSwitchOnIm2t(data.isRunning);
         }
     };
 
@@ -33,15 +47,15 @@ export const Home = () => {
         <div className="home-container">
             <div className="targets">
                 <div className="target-block">
-                        <span className="title">SAIC-Kafka</span>
+                        <span className="title">IM2T-Kafka</span>
                         <div className="content">
-                            <FormControlLabel control={<Switch disabled={true} />} label="ON/OFF" />
+                            <FormControlLabel control={<Switch checked={isSwitchOnIm2t} onChange={handleSwitchChangeIm2t} />} label="ON/OFF" />
                         </div>
                 </div>
                 <div className="target-block">
                     <span  className="title">APOW-MQTT</span>
                     <div className="content">
-                        <FormControlLabel control={<Switch checked={isSwitchOn} onChange={handleSwitchChange} />} label="ON/OFF" />
+                        <FormControlLabel control={<Switch checked={isSwitchOnApow} onChange={handleSwitchChangeApow} />} label="ON/OFF" />
                     </div>
                 </div>
                 <div className="target-block">
