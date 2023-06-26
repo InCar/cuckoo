@@ -35,6 +35,11 @@ class APX{
         const resp = await axios.put("/api/im2t/stop");
         return resp.data;
     }
+
+    public decodeIm2t = async (data: string)=>{
+        const resp = await axios.post("/api/im2t/decode", {data});
+        return resp.data;
+    }
 }
 
 export const apx = new APX();
