@@ -27,7 +27,8 @@ public class SimSimpleIm2t implements ISim {
     public SimSimpleIm2t(Im2tSimArgs args){
         this.taskArgs = args;
         // 当前只有这一种车型
-        this.vehicleX = new VehicleEP33L("LSJE36096TEST0001");
+        var tm = Instant.now();
+        this.vehicleX = new VehicleEP33L("LSJE36096TEST0001", tm);
         this.blinken618 = new Blinken618(args.host, args.port, args.topic);
     }
 
