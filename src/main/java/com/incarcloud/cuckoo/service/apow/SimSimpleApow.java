@@ -68,9 +68,9 @@ public class SimSimpleApow implements ISim {
                 count++;
                 if(count < 0) count = 0; // 避免长时间运行后溢出
 
+                Instant tm = Instant.now();
                 DevZLAN8308 devZLAN8308 = (DevZLAN8308)listDev.get(0);
-                devZLAN8308.setAcquisitionTime(Instant.now());
-                var buf = devZLAN8308.makeDataPackage();
+                var buf = devZLAN8308.makeDataPackage(tm);
 
                 pahoV5.sendAsync(this.taskArgs.topic, buf);
 

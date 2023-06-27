@@ -20,8 +20,6 @@ public class DevZLAN8308 implements IDev {
 
     private final static DateTimeFormatter c_fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC);
 
-    private Instant acquisitionTime;
-
 
     public DevZLAN8308(String deviceID, ApowDevTypes type, String orgId, String tag) {
         this.deviceID = deviceID;
@@ -30,22 +28,10 @@ public class DevZLAN8308 implements IDev {
         this.tag = tag;
     }
 
-    public Instant getAcquisitionTime() {
-        return acquisitionTime;
-    }
-
-    private String getAcquisitionTimeAsString(){
-        return c_fmt.format(acquisitionTime);
-    }
-
-    public void setAcquisitionTime(Instant acquisitionTime) {
-        this.acquisitionTime = acquisitionTime;
-    }
-
-    public JsonNode toJsonNode(JsonNode data){
+    public JsonNode toJsonNode(Instant tm, JsonNode data){
         ObjectMapper mapper = ApowJsonMapper.getMapper();
         ObjectNode root = mapper.createObjectNode();
-        root.put("acquisitionTime", getAcquisitionTimeAsString());
+        root.put("acquisitionTime", c_fmt.format(tm));
         root.put("deviceID", deviceID);
         root.put("type", Integer.toString(type.getValue()));
         root.put("orgId", orgId);
@@ -56,9 +42,9 @@ public class DevZLAN8308 implements IDev {
     }
 
     @Override
-    public byte[] makeDataPackage() {
+    public byte[] makeDataPackage(Instant tm) {
         ObjectNode data = ApowJsonMapper.getMapper().createObjectNode();
-        JsonNode root = this.toJsonNode(data);
+        JsonNode root = this.toJsonNode(tm, data);
         try {
             return ApowJsonMapper.getMapper().writeValueAsBytes(root);
         } catch (JsonProcessingException e) {

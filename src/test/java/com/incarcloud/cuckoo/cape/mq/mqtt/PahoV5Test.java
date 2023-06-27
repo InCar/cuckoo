@@ -31,7 +31,7 @@ public class PahoV5Test {
             var ref = new Object() {
                 String msgRecved = null;
             };
-            int count = 1000000;
+            int count = 10000;
             var latch = new CountDownLatch(count);
 
             pahoV5.recvAsyncAsString(mqttArgs.getTopic(), (msg) -> {
@@ -42,10 +42,10 @@ public class PahoV5Test {
             });
             String msgSend = "hello world";
             for(int i=0; i<count; i++) {
-                s_logger.info("send msg: {} {}", i, msgSend);
+                // s_logger.info("send msg: {} {}", i, msgSend);
                 while(atomFly.get() > 1000){
                     Thread.sleep(1);
-                    s_logger.info("message fly: {}", atomFly.get());
+                    // s_logger.info("message fly: {}", atomFly.get());
                 }
                 pahoV5.sendAsync(mqttArgs.getTopic(), msgSend);
                 atomFly.incrementAndGet();

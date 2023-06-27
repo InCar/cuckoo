@@ -26,11 +26,7 @@ public class DevStateGrid implements IDev {
         }
     }
 
-    public void setAcquisitionTime(Instant acquisitionTime){
-        this.devZLAN8308.setAcquisitionTime(acquisitionTime);
-    }
-
-    public JsonNode toJsonNode(){
+    public JsonNode toJsonNode(Instant tm){
         ObjectMapper mapper = ApowJsonMapper.getMapper();
         ObjectNode data = mapper.createObjectNode();
         data.put("PT", this.PT);
@@ -48,13 +44,13 @@ public class DevStateGrid implements IDev {
         }
 
 
-        return this.devZLAN8308.toJsonNode(data);
+        return this.devZLAN8308.toJsonNode(tm, data);
     }
 
     @Override
-    public byte[] makeDataPackage() {
+    public byte[] makeDataPackage(Instant tm) {
         ObjectNode data = ApowJsonMapper.getMapper().createObjectNode();
-        JsonNode root = this.toJsonNode();
+        JsonNode root = this.toJsonNode(tm);
         try {
             return ApowJsonMapper.getMapper().writeValueAsBytes(root);
         } catch (JsonProcessingException e) {
