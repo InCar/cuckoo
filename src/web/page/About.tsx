@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { apx } from "~/apx";
+import { RVM } from "~/rvm";
 import "./about.scss";
 
 export const About = () => {
@@ -10,9 +11,19 @@ export const About = () => {
 
     const onSubmit = async () => {
         const data = await apx.decodeIm2t(rawContent);
+        const rvm = new RVM();
+        const listEvents = rvm.split(data.hex);
+
         // insert a new line every 80 characters
-        const hex = data.hex.replace(/(.{80})/g, "$1\n");
+        // const hex = data.hex.replace(/(.{80})/g, "$1\n");
+        // setHexContent(hex);
+
+        const hex = listEvents.concat().join("$\n");
         setHexContent(hex);
+    };
+
+    const onClear = () => {
+        setHexContent("");
     };
 
     const onContentChanged = (e:any) => {
@@ -24,9 +35,12 @@ export const About = () => {
             <div className="raw-content">
                 <TextField multiline fullWidth minRows={5} maxRows={10} label="file content" value={rawContent} onChange={onContentChanged}></TextField>
             </div>
-            <Button variant="contained" onClick={onSubmit}>解码</Button>
+            <div className="actions">
+                <Button variant="contained" onClick={onSubmit}>解码</Button>
+                <Button variant="contained" onClick={onClear}>清除</Button>
+            </div>
             <div className="hex-content">
-                <TextField multiline fullWidth minRows={5} label="HEX" value={hexContent} style={{fontFamily:"Consolas"}}></TextField>
+                <TextField multiline fullWidth minRows={5} label="HEX" value={hexContent}></TextField>
             </div>
         </div>
     );
