@@ -68,6 +68,7 @@ public class SimSimpleIm2t implements ISim {
                     Instant tmNow = Instant.now();
                     byte[] data = this.vehicleX.makeDataPackage(tmNow);
                     this.blinken618.sendAsync(this.taskArgs.topic, data);
+                    // s_logger.info(new String(data));
                     s_logger.info("SimSimpleIm2t.run count={}", count);
                 }
                 count++;

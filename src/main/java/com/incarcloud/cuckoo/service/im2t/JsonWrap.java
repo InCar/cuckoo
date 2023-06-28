@@ -59,9 +59,12 @@ public class JsonWrap{
     }
 
     private byte[] compress(byte[] data){
-        try(ByteArrayOutputStream os = new ByteArrayOutputStream()){
-            GZIPOutputStream gos = new GZIPOutputStream(os);
+        try(var os = new ByteArrayOutputStream();
+            var gos = new GZIPOutputStream(os))
+        {
             gos.write(data);
+            gos.finish();
+
             return os.toByteArray();
         }
         catch (Exception ex){
