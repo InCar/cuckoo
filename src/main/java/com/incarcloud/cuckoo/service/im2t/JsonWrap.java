@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.io.ByteArrayOutputStream;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.zip.GZIPOutputStream;
 
 public class JsonWrap{
     private final static Base64.Encoder c_encB64 = Base64.getEncoder();
@@ -32,7 +34,10 @@ public class JsonWrap{
         ObjectMapper mapper = Im2tJsonMapper.getMapper();
         ObjectNode root = mapper.createObjectNode();
         root.put("fileName", String.format(c_fmtFileName, vin, c_fmtYMD.format(tm), c_fmtHMS.format(tm), version));
-        root.put("fileContent", c_encB64.encodeToString(data));
+        // data需要先gzip压缩,再base64编码
+        byte[] dataGZip = compress(data);
+        root.put("fileContent", c_encB64.encodeToString(dataGZip));
+
         root.put("timestamp", tm.toEpochMilli());
         root.put("messageId", String.format(c_fmtMessageId, vin, tm.toEpochMilli()));
 
@@ -50,6 +55,17 @@ public class JsonWrap{
         }
         catch (Exception e){
             throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] compress(byte[] data){
+        try(ByteArrayOutputStream os = new ByteArrayOutputStream()){
+            GZIPOutputStream gos = new GZIPOutputStream(os);
+            gos.write(data);
+            return os.toByteArray();
+        }
+        catch (Exception ex){
+            throw new RuntimeException(ex);
         }
     }
 }
