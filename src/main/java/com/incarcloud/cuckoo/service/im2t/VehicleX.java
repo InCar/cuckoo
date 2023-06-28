@@ -57,23 +57,31 @@ public class VehicleX implements IDev {
             byte[] buf = null;
             EvtCRC32 evtCRC32 = new EvtCRC32();
 
-            evtTimTbox.setTm(tm);
-            buf = evtTimTbox.toBytes();
-            evtCRC32.update(buf);
-            dos.write(buf);
+            // 10组数据一个数据包
+            final int COUNT = 10;
+            // 每个数据包的间隔1秒
+            for(int i=0;i<COUNT;i++){
+                Instant tmX = tm.minusSeconds(COUNT-i);
 
-            this.update(tm);
-            evtPos.setdLon(dLon);
-            evtPos.setdLat(dLat);
-            evtPos.setfAlt(fAlt);
-            evtPos.setfAzimuth(fAzimuth);
-            evtPos.setnStatus(3);
-            evtPos.setfHDop(5.0f);
-            evtPos.setfVDop(5.0f);
-            buf = evtPos.toBytes();
-            evtCRC32.update(buf);
-            dos.write(buf);
+                evtTimTbox.setTm(tmX);
+                buf = evtTimTbox.toBytes();
+                evtCRC32.update(buf);
+                dos.write(buf);
 
+                this.update(tmX);
+                evtPos.setdLon(dLon);
+                evtPos.setdLat(dLat);
+                evtPos.setfAlt(fAlt);
+                evtPos.setfAzimuth(fAzimuth);
+                evtPos.setnStatus(3);
+                evtPos.setfHDop(5.0f);
+                evtPos.setfVDop(5.0f);
+                buf = evtPos.toBytes();
+                evtCRC32.update(buf);
+                dos.write(buf);
+            }
+
+            // 最后加上CRC32
             buf = evtCRC32.toBytes();
             dos.write(buf);
 

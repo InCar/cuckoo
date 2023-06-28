@@ -70,7 +70,7 @@ public class SimSimpleIm2t implements ISim {
 
                 count++;
                 s_logger.info("SimSimpleIm2t.run count={}", count);
-                Thread.sleep(1000); // 每秒1次
+                Thread.sleep(10000); // 每10秒1次
             }
         }
         catch (Exception e){
