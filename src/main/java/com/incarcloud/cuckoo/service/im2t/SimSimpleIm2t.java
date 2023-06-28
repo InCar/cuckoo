@@ -28,7 +28,7 @@ public class SimSimpleIm2t implements ISim {
         this.taskArgs = args;
         // 当前只有这一种车型
         var tm = Instant.now();
-        this.vehicleX = new VehicleEP33L("LSJE36096TEST0001", tm);
+        this.vehicleX = new VehicleEP33L("LS5A33LR3FB356976", tm);
         this.blinken618 = new Blinken618(args.host, args.port, args.topic);
     }
 
@@ -63,14 +63,15 @@ public class SimSimpleIm2t implements ISim {
         try {
             while (!atomCanStop.get()) {
                 // 这个简单模拟器直接使用了当前时间,但这不是必须的
-                Instant tmNow = Instant.now();
-                byte[] data = this.vehicleX.makeDataPackage(tmNow);
-
-                this.blinken618.sendAsync(this.taskArgs.topic, data);
-
+                if(count % 10 == 0) {
+                    // 每10秒1次
+                    Instant tmNow = Instant.now();
+                    byte[] data = this.vehicleX.makeDataPackage(tmNow);
+                    this.blinken618.sendAsync(this.taskArgs.topic, data);
+                    s_logger.info("SimSimpleIm2t.run count={}", count);
+                }
                 count++;
-                s_logger.info("SimSimpleIm2t.run count={}", count);
-                Thread.sleep(10000); // 每10秒1次
+                Thread.sleep(1000); // 1秒
             }
         }
         catch (Exception e){
