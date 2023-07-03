@@ -42,6 +42,29 @@ public class RVMBaseSignl {
         }
     }
 
+    public byte[] toBytesTestOnly(){
+        try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            var dos = new DataOutputStream(os);
+            // 写入头部
+            dos.writeShort(EvtID);
+            dos.writeShort(EvtLen);
+
+            // 改写内容
+            this.writeBuf(0xff, 38, 8);
+
+            // 写入内容
+            dos.write(_buf, 0, EvtLen);
+
+            return os.toByteArray();
+        }catch (IOException ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+    // 按智己的bit索引定义,从指定的位置开始,写入指定长度(bits)
+    // value: 要写入的值
+    // nStartBit: 起始bit索引
+    // SignalLength: 信号长度(bits),由于value是int,所以最大值不能超过32
     private void writeBuf(int value, int nStartBit, int SignalLength){
         // bit索引定义来自于智己文档
         // 07 06 05 04 03 02 01 00
@@ -49,8 +72,8 @@ public class RVMBaseSignl {
         // 23 22 21 20 19 18 17 16
         // ...
         // 转换为对字节的操作
-        int nStartBitNorm = toNormalOrder(nStartBit);
-        int nEndBitNorm = toNormalOrder(nStartBit + SignalLength - 1);
+        int nStartBitNorm = toNormalOrder(nStartBit-32);
+        int nEndBitNorm = nStartBitNorm + SignalLength - 1;
         // 按字节计算
         int nStartByte = nStartBitNorm / 8;
         int nEndByte = nEndBitNorm / 8;
@@ -68,12 +91,17 @@ public class RVMBaseSignl {
                     shiftBits--;
                 }
                 else if(nBit > nEndBitNorm){
-                    shiftBits++;
+                    shiftBits--;
                 }
                 nMaskV >>= 1;
             }
             // 计算写入数值
-            byte maskValue = (byte)((value >> shiftBits) & nMask);
+            byte maskValue;
+            if(shiftBits >= 0)
+                maskValue = (byte)((value >> shiftBits) & nMask);
+            else
+                maskValue = (byte)((value << -shiftBits) & nMask);
+
             this._buf[i] = (byte)((this._buf[i] & ~nMask) | maskValue);
         }
     }
