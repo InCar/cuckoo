@@ -9,6 +9,7 @@ public class RVMCellVolSignl{
     public static final int EvtID = 0xD00B;
 
     private static final int BMSCellCount = 108; // EP33当前108个
+
     // 1字节数量+每个占2字节*108
     private static final int EvtLen = BMSCellCount*2+1;
 
