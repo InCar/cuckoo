@@ -5,15 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-// 电芯温度
-public class RVMCellTemSignl {
-    public static final int EvtID = 0xD00C;
+// 母线温度
+public class RVMBusBarTemSignl {
+    public static final int EvtID = 0xD00D;
 
-    private static final int BMSTemplCount = 12; // EP33当前12个
+    private static final int BMSBusTemplCount = 12; // EP33当前12个
 
     // 1字节数量+每个占2字节*12
-    private static final int EvtLen = BMSTemplCount*2+1;
-
+    private static final int EvtLen = BMSBusTemplCount*2+1;
 
     public byte[] toBytes() {
         try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
@@ -22,12 +21,12 @@ public class RVMCellTemSignl {
             dos.writeShort(EvtID);
             dos.writeShort(EvtLen);
 
-            dos.writeByte(BMSTemplCount);
+            dos.writeByte(BMSBusTemplCount);
 
             // 温度[-40, 215] 摄氏度
             int nTempl = 20;
             Random random = new Random();
-            for(int i=0;i<BMSTemplCount;i++){
+            for(int i=0;i<BMSBusTemplCount;i++){
                 // 略加随机变化
                 int nT = nTempl + (int)(10 * (random.nextFloat() - 0.5f));
                 dos.writeByte(nT+40);
@@ -39,5 +38,4 @@ public class RVMCellTemSignl {
             throw new RuntimeException(ex);
         }
     }
-
 }
