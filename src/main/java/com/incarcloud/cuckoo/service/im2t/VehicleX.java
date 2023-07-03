@@ -34,6 +34,7 @@ public class VehicleX implements IDev {
     private EvtBCMSts evtBCMSts = new EvtBCMSts();
     private EvtOdoAccel evtOdoAccel = new EvtOdoAccel();
     private RVMBaseSignl rvmBaseSignl = new RVMBaseSignl();
+    private RVMCellVolSignl rvmCellVolSignl = new RVMCellVolSignl();
 
     public VehicleX(String vin, Instant tm){
         this.vin = vin;
@@ -111,6 +112,7 @@ public class VehicleX implements IDev {
 
                 // 变长数据包
                 this.writeRVMBaseSignl(dos, evtCRC32);
+                this.writeRVMCellVolSignl(dos, evtCRC32);
             }
 
             // 最后加上CRC32
@@ -188,6 +190,12 @@ public class VehicleX implements IDev {
 
     private void writeRVMBaseSignl(DataOutputStream dos, EvtCRC32 evtCRC32) throws IOException {
         byte[] buf = rvmBaseSignl.toBytes();
+        evtCRC32.update(buf);
+        dos.write(buf);
+    }
+
+    private void writeRVMCellVolSignl(DataOutputStream dos, EvtCRC32 evtCRC32) throws IOException {
+        byte[] buf = rvmCellVolSignl.toBytes();
         evtCRC32.update(buf);
         dos.write(buf);
     }
