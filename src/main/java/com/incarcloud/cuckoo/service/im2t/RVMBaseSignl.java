@@ -71,7 +71,7 @@ public class RVMBaseSignl extends RVMSignl{
     private float fEPTTrInptShaftToq = 0.0f; // [-848.0, 1199.5] Nm
 
     // 电子驻车
-    private boolean bEPTBrkPdlDscrtInptStsV = false;
+    private boolean bEPTBrkPdlDscrtInptStsV = true; // 必须有效,否则代表刹车信号失效
     private boolean bEPTBrkPdlDscrtInptSts = false;
     private boolean bEPBSysBrkLghtsReqd = false;
 
