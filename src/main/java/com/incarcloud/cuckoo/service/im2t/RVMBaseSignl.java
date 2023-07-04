@@ -34,6 +34,14 @@ public class RVMBaseSignl extends RVMSignl{
             this.writeBuf(bEPBSysBrkLghtsReqd, 121, 1);
             this.writeBuf(bBrkSysBrkLghtsReqd, 122, 1);
 
+            nTMInvtrCrnt = 74; // 随便写个值
+            this.writeValid(bTMInvtrCrntV, 144, 1);
+            this.writeBuf((int)(nTMInvtrCrnt+1024), 159, 11);
+
+            nTmSpeedRPM = 627; // 随便写个值
+            this.writeBuf((int)(nTmSpeedRPM+32768), 216, 16);
+            this.writeValid(bTmSpeedRPMV, 232, 1);
+
             // 写入内容
             dos.write(_buf, 0, EvtLen);
 
@@ -77,4 +85,12 @@ public class RVMBaseSignl extends RVMSignl{
 
     // 刹车灯
     private boolean bBrkSysBrkLghtsReqd = false;
+
+    // 电机控制器电流
+    private int nTMInvtrCrnt = 0; // [-1024, +1023] 安培
+    private boolean bTMInvtrCrntV = true;
+
+    // 电机转速 [-32768, +32767] rpm
+    private int nTmSpeedRPM = 0;
+    private boolean bTmSpeedRPMV = true;
 }
