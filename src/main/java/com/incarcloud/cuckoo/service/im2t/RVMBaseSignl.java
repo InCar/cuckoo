@@ -22,6 +22,9 @@ public class RVMBaseSignl extends RVMSignl{
             dos.writeShort(EvtLen);
 
             // 改写内容
+            this.writeBuf((int)((fBMSPackCrnt+1000.0f) * 20.0f), 33, 16);
+            this.writeValid(bBMSPackCrntV, 49, 1);
+
             this.writeValid(bEPTTrInptShaftToqV, 106, 1);
             this.writeBuf((int)((fEPTTrInptShaftToq+848.0f)*2.0f), 102, 12);
 
@@ -59,6 +62,9 @@ public class RVMBaseSignl extends RVMSignl{
         }
     }
 
+    // 电流[-1000, 2276.75] 安培
+    private float fBMSPackCrnt = 236.0f;
+    private boolean bBMSPackCrntV = true;
 
     // 变速箱输入扭矩
     private boolean bEPTTrInptShaftToqV = false;
