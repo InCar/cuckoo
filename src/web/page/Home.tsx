@@ -10,7 +10,7 @@ export const Home = () => {
     const [version, setVersion] = useState("");
     const [sourceLink, setSourceLink] = useState("");
 
-    const [scriptsContent, setScriptsContent] = useState("Loading...");
+    const [scriptsContent, setScriptsContent] = useState("");
 
     useEffect(() => {
         (async()=>{
