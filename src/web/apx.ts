@@ -36,6 +36,11 @@ class APX{
         return resp.data;
     }
 
+    public fetchScriptText = async()=>{
+        const resp = await axios.get("/api/im2t/scripts");
+        return resp.data;
+    }
+
     public decodeIm2t = async (data: string)=>{
         const resp = await axios.post("/api/im2t/decode", {data});
         return resp.data;

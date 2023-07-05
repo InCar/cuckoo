@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Switch, FormControlLabel } from "@mui/material";
+import { Switch, FormControlLabel, TextField } from "@mui/material";
 import { apx } from "~/apx";
 import "./home.scss";
+import { ScriptEditor } from "~/cmx/ScriptEditor";
 
 export const Home = () => {
     const [isSwitchOnApow, setIsSwitchOnApow] = useState(false);
     const [isSwitchOnIm2t, setIsSwitchOnIm2t] = useState(false);
     const [version, setVersion] = useState("");
     const [sourceLink, setSourceLink] = useState("");
+
+    const [scriptsContent, setScriptsContent] = useState("Loading...");
 
     useEffect(() => {
         (async()=>{
@@ -20,6 +23,9 @@ export const Home = () => {
 
             const stateIm2t = await apx.fetchIm2tState();
             setIsSwitchOnIm2t(stateIm2t.isRunning);
+
+            const scriptText = await apx.fetchScriptText();
+            setScriptsContent(scriptText);
         })();
     }, []);
 
@@ -43,6 +49,10 @@ export const Home = () => {
         }
     };
 
+    const onContentChanged = (e:any) => {
+        setScriptsContent(e.target.value);
+    };
+
     return (
         <div className="home-container">
             <div className="targets">
@@ -64,6 +74,9 @@ export const Home = () => {
                         <FormControlLabel control={<Switch disabled={true} />} label="ON/OFF" />
                     </div>
                 </div>
+            </div>
+            <div className="scripts">
+                <ScriptEditor value={scriptsContent} />
             </div>
             <div className="version">
                 <a href={sourceLink} target="_blank">

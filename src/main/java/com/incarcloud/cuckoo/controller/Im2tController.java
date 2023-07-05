@@ -44,6 +44,11 @@ public class Im2tController {
         return this.getState();
     }
 
+    @GetMapping("/scripts")
+    public ResponseEntity<?> getScripts() {
+        return ResponseEntity.ok(im2tService.getScripts());
+    }
+
     @PostMapping("/decode")
     public ResponseEntity<?> decode(@RequestBody JsonNode args) {
         // data is a base64 string

@@ -1,6 +1,7 @@
 .home-container{
     display: flex;
     flex-flow: column nowrap;
+    align-items: center;
 
     .targets{
         display: flex;
@@ -30,6 +31,10 @@
                 justify-content: center;
             }
         }
+    }
+
+    .scripts{
+        width: 940px;
     }
 
     .version{
