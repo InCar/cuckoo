@@ -34,7 +34,16 @@
     }
 
     .scripts{
+        display: flex;
+        flex-flow: column nowrap;
         width: 940px;
+        gap: 0.25rem;
+        .actions{
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
     }
 
     .version{

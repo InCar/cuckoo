@@ -1,37 +1,44 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styles from "./ScriptEditor.module.scss";
 
 interface ScriptEditorProps{
     value: string;
+    txtValue: string[];
 }
 
 export const ScriptEditor = (props: ScriptEditorProps) => {
-    const [isTouched, setIsTouched] = useState(false); // to prevent re-rendering when typing
     const [text, setText] = useState(props.value);
 
-    if(!isTouched && props.value !== text){
+    if(props.value !== text){
         setText(props.value);
     }
+    props.txtValue[0] = props.value;
     
     const makeContent = (value:string)=>{
         var listLines = value.split("\n");
         return listLines.map((line, index)=>{
+            const rgxComment = /\/\/.*$/gi;
+            const matchComment = rgxComment.exec(line);
+            if(matchComment){
+                // remove the comment
+                line = line.replace(rgxComment, "");
+            }
+
             const rgx = /^(\+\d+:\d+)(\s+)(\w+)(.*)/gi;
             const match = rgx.exec(line);
-            if(index === 4){
-                console.info(line);
-            }
             if(match){
                 return (<div key={index}>
                     <span className={styles.txt_tm}>{match[1]}</span>
                     <span>{match[2]}</span>
                     <span className={styles.txt_action}>{match[3]}</span>
                     <span>{match[4]}</span>
+                    { matchComment && <span className={styles.txt_comment}>{matchComment[0]}</span> }
                 </div>)
             }
             else{
                 return (<div key={index}>
                     <span>{line}</span>
+                    { matchComment && <span className={styles.txt_comment}>{matchComment[0]}</span> }
                 </div>)
             }
         });
@@ -56,15 +63,7 @@ export const ScriptEditor = (props: ScriptEditorProps) => {
     }, [text]);
 
     const onInput = (e:any)=>{
-        if(!isTouched){
-            setIsTouched(true);
-        }
-
-        // TODO: delay dirty colorful text
-        const txtValue = unmakeContent(e.target.innerHTML);
-        if(txtValue !== text){
-            // setText(txtValue);
-        }
+        props.txtValue[0] = unmakeContent(e.target.innerHTML);
     };
 
     return (<div className={styles.script_container} contentEditable="true" suppressContentEditableWarning={true} onInput={onInput}>

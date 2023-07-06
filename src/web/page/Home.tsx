@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Switch, FormControlLabel, TextField } from "@mui/material";
+import { Switch, FormControlLabel, TextField, Button } from "@mui/material";
 import { apx } from "~/apx";
 import "./home.scss";
 import { ScriptEditor } from "~/cmx/ScriptEditor";
@@ -10,7 +10,10 @@ export const Home = () => {
     const [version, setVersion] = useState("");
     const [sourceLink, setSourceLink] = useState("");
 
+    const [scriptId, setScriptId] = useState(0);
     const [scriptsContent, setScriptsContent] = useState("");
+
+    const txtValue:string[] = [];
 
     useEffect(() => {
         (async()=>{
@@ -49,8 +52,9 @@ export const Home = () => {
         }
     };
 
-    const onContentChanged = (e:any) => {
-        setScriptsContent(e.target.value);
+    const onOK = (e:any) => {
+        setScriptId(scriptId+1); // force ScriptEditor to re-render
+        setScriptsContent(txtValue[0]);
     };
 
     return (
@@ -76,7 +80,10 @@ export const Home = () => {
                 </div>
             </div>
             <div className="scripts">
-                <ScriptEditor value={scriptsContent} />
+                <ScriptEditor key={scriptId} value={scriptsContent} txtValue={txtValue} />
+                <div className="actions">
+                    <Button variant="contained" onClick={onOK}>OK</Button>
+                </div>
             </div>
             <div className="version">
                 <a href={sourceLink} target="_blank">
