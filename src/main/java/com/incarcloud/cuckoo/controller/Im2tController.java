@@ -3,7 +3,6 @@ package com.incarcloud.cuckoo.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.incarcloud.cuckoo.dto.KafkaArgs;
 import com.incarcloud.cuckoo.dto.RunningState;
-import com.incarcloud.cuckoo.service.ApowSimArgs;
 import com.incarcloud.cuckoo.service.Im2tService;
 import com.incarcloud.cuckoo.service.Im2tSimArgs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,12 @@ public class Im2tController {
     @GetMapping("/scripts")
     public ResponseEntity<?> getScripts() {
         return ResponseEntity.ok(im2tService.getScripts());
+    }
+
+    @PutMapping("/scripts")
+    public ResponseEntity<?> setScripts(@RequestBody String scripts) {
+        im2tService.setScripts(scripts);
+        return ResponseEntity.ok(scripts);
     }
 
     @PostMapping("/decode")

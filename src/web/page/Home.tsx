@@ -52,9 +52,10 @@ export const Home = () => {
         }
     };
 
-    const onOK = (e:any) => {
+    const onOK = async(e:any) => {
+        const scriptTxt = await apx.saveScriptText(txtValue[0]);
         setScriptId(scriptId+1); // force ScriptEditor to re-render
-        setScriptsContent(txtValue[0]);
+        setScriptsContent(scriptTxt);
     };
 
     return (

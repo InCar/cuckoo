@@ -41,6 +41,12 @@ class APX{
         return resp.data;
     }
 
+    public saveScriptText = async (scripts: string)=>{
+        const resp = await axios.put("/api/im2t/scripts", scripts,
+            { headers: { 'Content-Type': 'text/plain'} });
+        return resp.data;
+    }
+
     public decodeIm2t = async (data: string)=>{
         const resp = await axios.post("/api/im2t/decode", {data});
         return resp.data;
