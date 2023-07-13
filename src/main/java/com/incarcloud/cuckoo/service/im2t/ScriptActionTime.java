@@ -12,7 +12,13 @@ public class ScriptActionTime extends ScriptAction{
 
     public ScriptActionTime(int sec, String args){
         super(sec);
+        args = parseComment(args);
+
         var tmLocal = LocalDateTime.parse(args, s_fmt);
         this.tm = tmLocal.atZone(ZoneId.of("UTC")).toInstant();
+    }
+
+    public Instant getInitTm(){
+        return tm;
     }
 }

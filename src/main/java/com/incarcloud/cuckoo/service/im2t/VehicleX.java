@@ -8,8 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +38,6 @@ public class VehicleX implements IDev {
     private RVMCellTemSignl rvmCellTemSignl = new RVMCellTemSignl();
     private RVMBusBarTemSignl rvmBusBarTemSignl = new RVMBusBarTemSignl();
 
-    private List<ScriptAction> listActions = new ArrayList<>();
-
     public VehicleX(String vin, Instant tm){
         this.vin = vin;
         this.tm = tm;
@@ -52,14 +48,8 @@ public class VehicleX implements IDev {
         return this.vin;
     }
 
-    public void loadScripts(String scripts){
-        listActions.clear();
-
-        String[] listScripts = scripts.split("\n");
-        for (String script: listScripts) {
-            var action = ScriptFactory.parse(script);
-            listActions.add(action);
-        }
+    public void setTm(Instant tmX){
+        this.tm = tmX;
     }
 
     public void update(Instant tmX){

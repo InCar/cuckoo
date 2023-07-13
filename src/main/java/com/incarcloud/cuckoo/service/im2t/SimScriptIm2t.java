@@ -7,9 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-// 这是一种最简单的模拟器,只模拟一台车
+// 这是一种简单的模拟器,只模拟一台车,但可以依据脚本执行一些动作
 public class SimScriptIm2t implements ISim {
     private final static Logger s_logger = LoggerFactory.getLogger(SimSimpleIm2t.class);
 
@@ -24,16 +27,32 @@ public class SimScriptIm2t implements ISim {
     private AtomicBoolean atomCanStop = new AtomicBoolean(false);
     private Thread threadWorking = null;
 
+    private ArrayList<ScriptAction> listActions = new ArrayList<ScriptAction>();
+    private Instant tmStartPlay; // 模拟的开始时间
+    private float fTmRatio = 1.0f; // 时间压缩比 2.0x代表模拟器以2倍现实世界的时间快速运行
+
     public SimScriptIm2t(Im2tSimArgs args){
         this.taskArgs = args;
         // 当前只有这一种车型
         var tm = Instant.now();
+        this.tmStartPlay = tm;
         this.vehicleX = new VehicleEP33L("LS5A33LR3FB356976", tm);
         this.blinken618 = new Blinken618(args.host, args.port, args.topic);
     }
 
     public void setScripts(String scripts){
-        this.vehicleX.loadScripts(scripts);
+        this.listActions.clear();
+
+        String[] listScripts = scripts.split("\n");
+        for (String script: listScripts) {
+            var action = ScriptFactory.parse(script);
+            if(action != null){
+                listActions.add(action);
+            }
+            else{
+                s_logger.warn("Invalid script: {}", script);
+            }
+        }
     }
 
     @Override
@@ -65,25 +84,60 @@ public class SimScriptIm2t implements ISim {
         int count = 0;
 
         try {
-            while (!atomCanStop.get()) {
-                // 这个简单模拟器直接使用了当前时间,但这不是必须的
-                if(count % 10 == 0) {
-                    // 每10秒1次
-                    Instant tmNow = Instant.now();
-                    byte[] data = this.vehicleX.makeDataPackage(tmNow);
+            execInitActions(); //执行初始化动作
 
-                    // this.blinken618.sendAsync(this.taskArgs.topic, data);
+            final int simIntervalMS = 1000*10; // 毫秒. 模拟的车辆每10秒(模拟世界的时间)发送一次数据包
+            final int nIntervalRealMS = (int)(simIntervalMS / fTmRatio); // 毫秒. 考虑时间压缩系数,对应真实世界的时间间隔
+            if(nIntervalRealMS < 100) s_logger.warn("time_compress倍率过高 {}", fTmRatio);
+            int nX = 1; // 每几次循环发送一次数据
+            int nWaitInterval = nIntervalRealMS;
+            while(nWaitInterval > 1000){
+                nX *= 2;
+                nWaitInterval /= 2;
+            }
+            Instant tmStartReal = Instant.now(); // 模拟开始的真实时间
+
+            while (!atomCanStop.get()) {
+                if(count % nX == 0) {
+                    Instant tmNow = Instant.now();
+                    Instant tmNowPlay = tmStartPlay.plusMillis((long)((tmNow.toEpochMilli() - tmStartReal.toEpochMilli()) * fTmRatio));
+
+                    byte[] data = this.vehicleX.makeDataPackage(tmNowPlay);
+
+                    this.blinken618.sendAsync(this.taskArgs.topic, data);
                     // 调试用途
-                    s_logger.info(new String(data));
+                    // s_logger.info(new String(data));
 
                     s_logger.info("SimSimpleIm2t.run count={}", count);
                 }
                 count++;
-                Thread.sleep(1000); // 1秒
+                Thread.sleep(nWaitInterval);
             }
         }
         catch (Exception e){
             s_logger.error("SimSimpleIm2t.run", e);
+        }
+    }
+
+    private void execInitActions(){
+        for(var action : listActions){
+            if(action.getSec() == 0){
+                if(action instanceof ScriptActionTime){
+                    // 设定模拟初始时间
+                    var actTM = (ScriptActionTime)action;
+                    tmStartPlay = actTM.getInitTm();
+                    this.vehicleX.setTm(tmStartPlay);
+                }
+                else if(action instanceof ScriptActionTimeCompress){
+                    // 设定时间压缩比
+                    var actTmCompress = (ScriptActionTimeCompress)action;
+                    fTmRatio = actTmCompress.getCompressRatio();
+                }
+            }
+            else{
+                // 非0秒的动作, 表明不是初始化动作，不在此处执行
+                break;
+            }
         }
     }
 }

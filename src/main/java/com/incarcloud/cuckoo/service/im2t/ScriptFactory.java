@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class ScriptFactory {
     private final static Logger s_logger = LoggerFactory.getLogger(ScriptFactory.class);
 
-    private static final Pattern rgxAction = Pattern.compile("^(\\+\\d+:\\d+)(\\s+)(\\w+)(.*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern rgxAction = Pattern.compile("^(\\+\\d+:\\d+)(\\s+)(\\w+)(\\s*)(.*)", Pattern.CASE_INSENSITIVE);
     public static ScriptAction parse(String script) {
         // +00:00 time 2023-01-01 00:00:00 // 设定初始时间
         var matcher = rgxAction.matcher(script);
@@ -17,10 +17,10 @@ public class ScriptFactory {
             int sec = tm2sec(tm);
             String action = matcher.group(3);
             if(action.equalsIgnoreCase("time")){
-                return new ScriptActionTime(sec, matcher.group(4));
+                return new ScriptActionTime(sec, matcher.group(5));
             }
             else if(action.equalsIgnoreCase("time_compress")){
-                return null;
+                return new ScriptActionTimeCompress(sec, matcher.group(5));
             }
             else if(action.equalsIgnoreCase("pos")){
                 return null;
