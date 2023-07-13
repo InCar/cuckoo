@@ -30,7 +30,7 @@ public class ScriptFactory {
                 return new ScriptActionSpeed(sec, args);
             }
             else if(action.equalsIgnoreCase("course")){
-                return null;
+                return new ScriptActionCourse(sec, args);
             }
             else if(action.equalsIgnoreCase("finish")){
                 return new ScriptActionFinish(sec, args);

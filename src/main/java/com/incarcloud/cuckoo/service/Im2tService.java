@@ -47,7 +47,7 @@ public class Im2tService {
             sbScripts.append("+00:00 course 90.0 // 设定朝向方位角正东\n");
             sbScripts.append("+01:16 speed  5.0km/h // 1分16秒后慢慢行驶\n");
             sbScripts.append("+00:10 speed  35.0km/h // 再过10秒速度提升\n");
-            sbScripts.append("+00:00 course 45.0km/h // 同时转变朝向\n");
+            sbScripts.append("+00:00 course 45.0 // 同时转变朝向\n");
             sbScripts.append("+02:00 speed  55.0km/h // 再过2分钟后速度提升\n");
             sbScripts.append("+05:00 speed  0.0km/h  // 5分钟后停下来\n");
             sbScripts.append("+00:30 finish // 结束\n");

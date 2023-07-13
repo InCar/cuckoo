@@ -116,10 +116,9 @@ public class SimScriptIm2t implements ISim {
 
                     byte[] data = this.vehicleX.makeDataPackage(tmNowPlay);
 
-                    // this.blinken618.sendAsync(this.taskArgs.topic, data);
+                    this.blinken618.sendAsync(this.taskArgs.topic, data);
                     // 调试用途
                     // s_logger.info(new String(data));
-                    s_logger.info("SimSimpleIm2t.run count={} : {} seconds", count, nDiffSeconds);
                 }
                 count++;
                 Thread.sleep(nWaitInterval);
@@ -155,6 +154,11 @@ public class SimScriptIm2t implements ISim {
                     var actionSpeed = (ScriptActionSpeed)action;
                     this.vehicleX.setSpeed(actionSpeed.getSpeed());
                 }
+                else if(action instanceof ScriptActionCourse){
+                    var actionCourse = (ScriptActionCourse)action;
+                    this.vehicleX.setCourse(actionCourse.getCourse());
+                }
+                s_logger.info("action: {}", action.getComment());
 
                 nCount++;
             }
@@ -183,6 +187,11 @@ public class SimScriptIm2t implements ISim {
                     var actionSpeed = (ScriptActionSpeed)action;
                     this.vehicleX.setSpeed(actionSpeed.getSpeed());
                 }
+                else if(action instanceof ScriptActionCourse){
+                    var actionCourse = (ScriptActionCourse)action;
+                    this.vehicleX.setCourse(actionCourse.getCourse());
+                }
+                s_logger.info("{} seconds: {}", nDiffSeconds, action.getComment());
             }
             else{
                 break;
