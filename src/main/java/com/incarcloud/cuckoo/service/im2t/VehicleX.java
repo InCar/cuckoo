@@ -52,6 +52,11 @@ public class VehicleX implements IDev {
         this.tm = tmX;
     }
 
+    public void setPos(double dLon, double dLat){
+        this.dLon = dLon;
+        this.dLat = dLat;
+    }
+
     public void update(Instant tmX){
         // 标记开始时间
         if(tmStart == null) tmStart = tmX;

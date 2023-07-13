@@ -16,14 +16,15 @@ public class ScriptFactory {
             String tm = matcher.group(1);
             int sec = tm2sec(tm);
             String action = matcher.group(3);
+            String args = matcher.group(5);
             if(action.equalsIgnoreCase("time")){
-                return new ScriptActionTime(sec, matcher.group(5));
+                return new ScriptActionTime(sec, args);
             }
             else if(action.equalsIgnoreCase("time_compress")){
-                return new ScriptActionTimeCompress(sec, matcher.group(5));
+                return new ScriptActionTimeCompress(sec, args);
             }
             else if(action.equalsIgnoreCase("pos")){
-                return null;
+                return new ScriptActionPos(sec, args);
             }
             else if(action.equalsIgnoreCase("speed")){
                 return null;
@@ -32,7 +33,7 @@ public class ScriptFactory {
                 return null;
             }
             else if(action.equalsIgnoreCase("finish")){
-                return null;
+                return new ScriptActionFinish(sec, args);
             }
             else{
                 throw new RuntimeException("Invalid script: " + script);

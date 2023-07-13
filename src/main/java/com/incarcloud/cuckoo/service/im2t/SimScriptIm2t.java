@@ -53,6 +53,13 @@ public class SimScriptIm2t implements ISim {
                 s_logger.warn("Invalid script: {}", script);
             }
         }
+
+        // 时间是以累加的方式计算的
+        int totalSeconds = 0;
+        for(var action: listActions){
+            totalSeconds += action.getSec();
+            action.setSec(totalSeconds);
+        }
     }
 
     @Override
@@ -84,7 +91,7 @@ public class SimScriptIm2t implements ISim {
         int count = 0;
 
         try {
-            execInitActions(); //执行初始化动作
+            int countExecuted = execInitActions(); //执行初始化动作
 
             final int simIntervalMS = 1000*10; // 毫秒. 模拟的车辆每10秒(模拟世界的时间)发送一次数据包
             final int nIntervalRealMS = (int)(simIntervalMS / fTmRatio); // 毫秒. 考虑时间压缩系数,对应真实世界的时间间隔
@@ -100,26 +107,33 @@ public class SimScriptIm2t implements ISim {
             while (!atomCanStop.get()) {
                 if(count % nX == 0) {
                     Instant tmNow = Instant.now();
-                    Instant tmNowPlay = tmStartPlay.plusMillis((long)((tmNow.toEpochMilli() - tmStartReal.toEpochMilli()) * fTmRatio));
+                    int nDiffMS = (int)((tmNow.toEpochMilli() - tmStartReal.toEpochMilli()) * fTmRatio);
+                    Instant tmNowPlay = tmStartPlay.plusMillis(nDiffMS);
+                    int nDiffSeconds = nDiffMS / 1000;
+
+                    countExecuted = execActions(countExecuted, nDiffSeconds); // 执行动作
+                    if(countExecuted < 0) break; // 负值代表[finish]停止执行
 
                     byte[] data = this.vehicleX.makeDataPackage(tmNowPlay);
 
-                    this.blinken618.sendAsync(this.taskArgs.topic, data);
+                    // this.blinken618.sendAsync(this.taskArgs.topic, data);
                     // 调试用途
                     // s_logger.info(new String(data));
-
-                    s_logger.info("SimSimpleIm2t.run count={}", count);
+                    s_logger.info("SimSimpleIm2t.run count={} : {} seconds", count, nDiffSeconds);
                 }
                 count++;
                 Thread.sleep(nWaitInterval);
             }
+
+            s_logger.info("SimSimpleIm2t.run finished");
         }
         catch (Exception e){
             s_logger.error("SimSimpleIm2t.run", e);
         }
     }
 
-    private void execInitActions(){
+    private int execInitActions(){
+        int nCount = 0;
         for(var action : listActions){
             if(action.getSec() == 0){
                 if(action instanceof ScriptActionTime){
@@ -133,11 +147,42 @@ public class SimScriptIm2t implements ISim {
                     var actTmCompress = (ScriptActionTimeCompress)action;
                     fTmRatio = actTmCompress.getCompressRatio();
                 }
+                else if(action instanceof ScriptActionPos){
+                    var actionPos = (ScriptActionPos)action;
+                    this.vehicleX.setPos(actionPos.getLng(), actionPos.getLat());
+                }
+
+                nCount++;
             }
             else{
                 // 非0秒的动作, 表明不是初始化动作，不在此处执行
                 break;
             }
         }
+
+        return nCount;
+    }
+
+    private int execActions(int countExecuted, int nDiffSeconds){
+        int count = countExecuted;
+        for(int i=countExecuted;i<listActions.size();i++){
+            var action = listActions.get(i);
+            if(action.getSec() <= nDiffSeconds){
+                if(action instanceof ScriptActionFinish){
+                    return -1; // 负值代表[finish]停止执行
+                }
+                else if(action instanceof ScriptActionPos){
+                    var actionPos = (ScriptActionPos)action;
+                    this.vehicleX.setPos(actionPos.getLng(), actionPos.getLat());
+                }
+            }
+            else{
+                break;
+            }
+
+            count++;
+        }
+
+        return count;
     }
 }
