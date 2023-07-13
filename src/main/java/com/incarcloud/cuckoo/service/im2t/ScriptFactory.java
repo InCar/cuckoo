@@ -27,7 +27,7 @@ public class ScriptFactory {
                 return new ScriptActionPos(sec, args);
             }
             else if(action.equalsIgnoreCase("speed")){
-                return null;
+                return new ScriptActionSpeed(sec, args);
             }
             else if(action.equalsIgnoreCase("course")){
                 return null;

@@ -57,6 +57,10 @@ public class VehicleX implements IDev {
         this.dLat = dLat;
     }
 
+    public void setSpeed(float fSpeedKMPerHour){
+        this.fSpeed = fSpeedKMPerHour * 1000.0f / 3600.0f;
+    }
+
     public void update(Instant tmX){
         // 标记开始时间
         if(tmStart == null) tmStart = tmX;

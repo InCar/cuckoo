@@ -151,6 +151,10 @@ public class SimScriptIm2t implements ISim {
                     var actionPos = (ScriptActionPos)action;
                     this.vehicleX.setPos(actionPos.getLng(), actionPos.getLat());
                 }
+                else if(action instanceof ScriptActionSpeed){
+                    var actionSpeed = (ScriptActionSpeed)action;
+                    this.vehicleX.setSpeed(actionSpeed.getSpeed());
+                }
 
                 nCount++;
             }
@@ -174,6 +178,10 @@ public class SimScriptIm2t implements ISim {
                 else if(action instanceof ScriptActionPos){
                     var actionPos = (ScriptActionPos)action;
                     this.vehicleX.setPos(actionPos.getLng(), actionPos.getLat());
+                }
+                else if(action instanceof ScriptActionSpeed){
+                    var actionSpeed = (ScriptActionSpeed)action;
+                    this.vehicleX.setSpeed(actionSpeed.getSpeed());
                 }
             }
             else{
