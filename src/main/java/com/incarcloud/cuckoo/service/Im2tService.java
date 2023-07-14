@@ -40,7 +40,7 @@ public class Im2tService {
     public String getScripts(){
         if(this.scripts == null){
             var sbScripts = new StringBuilder();
-            sbScripts.append("+00:00 time 2023-01-01 00:00:00 // 设定初始时间\n");
+            sbScripts.append("+00:00 time 2023-07-01 00:00:00 // 设定初始时间\n");
             sbScripts.append("+00:00 time_compress 1.0 // 设定时间压缩比\n");
             sbScripts.append("+00:00 pos E114.5028 N30.4812 // 设定初始坐标\n");
             sbScripts.append("+00:00 speed  0.0km/h // 设定初始速度\n");
