@@ -33,6 +33,7 @@ public class ScriptActionPos extends ScriptAction{
             else{
                 throw new RuntimeException("Invalid script: " + args);
             }
+            dLat *= Double.parseDouble(matcher.group(4));
         }
         else{
             throw new RuntimeException("Invalid script: " + args);
