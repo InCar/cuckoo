@@ -32,9 +32,13 @@ public class Im2tController {
 
     @PutMapping("/start")
     public ResponseEntity<?> start() {
-        var args = new Im2tSimArgs(this.kafkaArgs);
-        this.im2tService.start(args);
-        return this.getState();
+        try {
+            var args = new Im2tSimArgs(this.kafkaArgs);
+            this.im2tService.start(args);
+            return this.getState();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/stop")

@@ -45,6 +45,7 @@ public class SimScriptIm2t implements ISim {
 
         String[] listScripts = scripts.split("\n");
         for (String script: listScripts) {
+            if(script.length() == 0) continue; //skip empty line
             var action = ScriptFactory.parse(script);
             if(action != null){
                 listActions.add(action);

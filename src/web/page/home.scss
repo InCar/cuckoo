@@ -44,6 +44,13 @@
             justify-content: center;
             gap: 0.5rem;
         }
+
+        .error-message{
+            margin-top: 1rem;
+            border: 1px solid red;
+            padding: 1rem;
+            color: crimson;
+        }
     }
 
     .version{

@@ -12,6 +12,8 @@ export const Home = () => {
 
     const [scriptId, setScriptId] = useState(0);
     const [scriptsContent, setScriptsContent] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const hasErrorMessage = React.useMemo(() => errorMessage !== "", [errorMessage]);
 
     const txtValue:string[] = [];
 
@@ -47,12 +49,18 @@ export const Home = () => {
             const data = await apx.stopIm2t();
             setIsSwitchOnIm2t(data.isRunning);
         }else{
-            const data = await apx.startIm2t();
-            setIsSwitchOnIm2t(data.isRunning);
+            try{
+                const data = await apx.startIm2t();
+                setIsSwitchOnIm2t(data.isRunning);
+            }
+            catch(e: any){
+                setErrorMessage(e.response.data);
+            }
         }
     };
 
     const onOK = async(e:any) => {
+        setErrorMessage("");
         const scriptTxt = await apx.saveScriptText(txtValue[0]);
         setScriptId(scriptId+1); // force ScriptEditor to re-render
         setScriptsContent(scriptTxt);
@@ -85,6 +93,11 @@ export const Home = () => {
                 <div className="actions">
                     <Button variant="contained" onClick={onOK}>OK</Button>
                 </div>
+                { hasErrorMessage && 
+                    <div className="error-message">
+                        <span>{errorMessage}</span>
+                    </div>
+                }
             </div>
             <div className="version">
                 <a href={sourceLink} target="_blank">
