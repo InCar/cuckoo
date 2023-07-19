@@ -14,7 +14,7 @@ import java.util.List;
 // 模拟一台车
 public class VehicleX implements IDev {
     private static final Logger s_logger = LoggerFactory.getLogger(VehicleX.class);
-    private final String vin;
+    private String vin;
     private Instant tmStart = null; // 开始时间
     private Instant tm; // 最后一次更新的时间
 
@@ -46,6 +46,9 @@ public class VehicleX implements IDev {
 
     public String getVin(){
         return this.vin;
+    }
+    public void setVin(String vin){
+        this.vin = vin;
     }
 
     public void setTm(Instant tmX){

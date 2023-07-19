@@ -147,6 +147,10 @@ public class SimScriptIm2t implements ISim {
                     var actTmCompress = (ScriptActionTimeCompress)action;
                     fTmRatio = actTmCompress.getCompressRatio();
                 }
+                else if(action instanceof ScriptActionVin){
+                    var actionVin = (ScriptActionVin)action;
+                    this.vehicleX.setVin(actionVin.getVin());
+                }
                 else if(action instanceof ScriptActionPos){
                     var actionPos = (ScriptActionPos)action;
                     this.vehicleX.setPos(actionPos.getLng(), actionPos.getLat());

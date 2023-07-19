@@ -23,6 +23,9 @@ public class ScriptFactory {
             else if(action.equalsIgnoreCase("time_compress")){
                 return new ScriptActionTimeCompress(sec, args);
             }
+            else if(action.equalsIgnoreCase("vin")){
+                return new ScriptActionVin(sec, args);
+            }
             else if(action.equalsIgnoreCase("pos")){
                 return new ScriptActionPos(sec, args);
             }

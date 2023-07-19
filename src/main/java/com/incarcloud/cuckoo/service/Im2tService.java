@@ -39,9 +39,11 @@ public class Im2tService {
 
     public String getScripts(){
         if(this.scripts == null){
+            // initial scripts
             var sbScripts = new StringBuilder();
             sbScripts.append("+00:00 time 2023-07-01 00:00:00 // 设定初始时间\n");
             sbScripts.append("+00:00 time_compress 1.0 // 设定时间压缩比\n");
+            sbScripts.append("+00:00 vin LS5A33LR3FB356976 // 设定车辆VIN\n");
             sbScripts.append("+00:00 pos E114.5028 N30.4812 // 设定初始坐标\n");
             sbScripts.append("+00:00 speed  0.0km/h // 设定初始速度\n");
             sbScripts.append("+00:00 course 90.0 // 设定朝向方位角正东\n");
