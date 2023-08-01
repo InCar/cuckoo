@@ -5,6 +5,8 @@ import "./home.scss";
 import { ScriptEditor } from "~/cmx/ScriptEditor";
 
 export const Home = () => {
+    const [activePanel, setActivePanel] = useState("IM2T-Kafka");
+
     const [isSwitchOnApow, setIsSwitchOnApow] = useState(false);
     const [isSwitchOnIm2t, setIsSwitchOnIm2t] = useState(false);
     const [version, setVersion] = useState("");
@@ -31,6 +33,7 @@ export const Home = () => {
 
             const scriptText = await apx.fetchScriptText();
             setScriptsContent(scriptText);
+
         })();
     }, []);
 
@@ -66,39 +69,50 @@ export const Home = () => {
         setScriptsContent(scriptTxt);
     };
 
+    const onActivePanel = (panelName:string) => {
+        setActivePanel(panelName);
+    };
+
+    const activePanelClass = (panel:string)=>{
+        return `target-block ${activePanel===panel?"active":"inactive"}`
+    }
+
     return (
         <div className="home-container">
             <div className="targets">
-                <div className="target-block">
+                <div className={activePanelClass("IM2T-Kafka")} onClick={()=>onActivePanel("IM2T-Kafka")}>
                         <span className="title">IM2T-Kafka</span>
                         <div className="content">
                             <FormControlLabel control={<Switch checked={isSwitchOnIm2t} onChange={handleSwitchChangeIm2t} />} label="ON/OFF" />
                         </div>
                 </div>
-                <div className="target-block">
+                <div className={activePanelClass("APOW-MQTT")} onClick={()=>onActivePanel("APOW-MQTT")}>
                     <span  className="title">APOW-MQTT</span>
                     <div className="content">
                         <FormControlLabel control={<Switch checked={isSwitchOnApow} onChange={handleSwitchChangeApow} />} label="ON/OFF" />
                     </div>
                 </div>
-                <div className="target-block">
+                <div className={activePanelClass("TCP")} onClick={()=>onActivePanel("TCP")}>
                     <span  className="title">TCP</span>
                     <div className="content">
                         <FormControlLabel control={<Switch disabled={true} />} label="ON/OFF" />
                     </div>
                 </div>
             </div>
-            <div className="scripts">
-                <ScriptEditor key={scriptId} value={scriptsContent} txtValue={txtValue} />
-                <div className="actions">
-                    <Button variant="contained" onClick={onOK}>OK</Button>
-                </div>
-                { hasErrorMessage && 
-                    <div className="error-message">
-                        <span>{errorMessage}</span>
+            {
+                activePanel === "IM2T-Kafka" &&
+                <div className="scripts">
+                    <ScriptEditor key={scriptId} value={scriptsContent} txtValue={txtValue} />
+                    <div className="actions">
+                        <Button variant="contained" onClick={onOK}>OK</Button>
                     </div>
-                }
-            </div>
+                    { hasErrorMessage && 
+                        <div className="error-message">
+                            <span>{errorMessage}</span>
+                        </div>
+                    }
+                </div>
+            }
             <div className="version">
                 <a href={sourceLink} target="_blank">
                     <svg viewBox="0 0 16 16" width="16" height="16">

@@ -21,7 +21,6 @@
             .title{
                 color: darkblue;
                 text-align: center;
-                font-weight: bold;
             }
 
             .content{
@@ -29,6 +28,13 @@
                 display: flex;
                 flex-flow: column nowrap;
                 justify-content: center;
+            }
+
+            &.active{
+                border: blue 1px solid;
+                .title{
+                    font-weight: bold;
+                }
             }
         }
     }

@@ -25,8 +25,9 @@ public class SimSimpleApow implements ISim {
     public SimSimpleApow(ApowSimArgs args){
         this.taskArgs = args;
 
-        DevZLAN8308 devZLAN8308 = new DevZLAN8308("ZLAN8308-1", ApowDevTypes.ElectricMeter, "1", "ZLAN8308");
-        listDev.add(devZLAN8308);
+        // DevZLAN8308 devZLAN8308 = new DevZLAN8308("ZLAN8308-1", ApowDevTypes.ElectricMeter, "1", "ZLAN8308");
+        DevStateGrid devStateGrid = new DevStateGrid("Grid001", "1", "StateGrid");
+        listDev.add(devStateGrid);
     }
 
     @Override
@@ -69,10 +70,12 @@ public class SimSimpleApow implements ISim {
                 if(count < 0) count = 0; // 避免长时间运行后溢出
 
                 Instant tm = Instant.now();
-                DevZLAN8308 devZLAN8308 = (DevZLAN8308)listDev.get(0);
-                var buf = devZLAN8308.makeDataPackage(tm);
+                // TODO: modify
+                IDev devX = (IDev)listDev.get(0);
+                var buf = devX.makeDataPackage(tm);
 
-                pahoV5.sendAsync(this.taskArgs.topic, buf);
+                s_logger.info(new String(buf));
+                // pahoV5.sendAsync(this.taskArgs.topic, buf);
 
                 if(count % 100 == 0){
                     float speed = MAX_SPEED;

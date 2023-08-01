@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-const apiServer = "http://127.0.0.1:8147";
+const apiServer = "http://10.0.14.213:8147";
 
 export default defineConfig({
     build: {

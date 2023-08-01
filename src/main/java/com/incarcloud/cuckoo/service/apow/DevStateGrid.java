@@ -32,17 +32,28 @@ public class DevStateGrid implements IDev {
         data.put("PT", this.PT);
         data.put("CT", this.CT);
 
+        data.put("switchInOrOutStatus", 0);
+
         String[] arrPhase = {"A", "B", "C"};
 
         // 电压和电流都使用3位整数
         data.put("pointUAndI", 0x0303);
+        data.put("pointPQ", 0);
 
+        // UA UB UC
         for(int i=0;i<tripleAC.length;i++){
             var acPhase = tripleAC[i];
             // 电压转成3位整数1位小数的定点数
             data.put("U" + arrPhase[i], (int)acPhase.getVolatage()*10);
         }
 
+        // TODO: UAB UBC UAC
+        // TODO: IA IB IC
+        // TODO: PA PB PC PTotal
+        // TODO: PFA PFB PFC PFTotal
+        // TODO: SA SB SC STotal
+        // TODO: rateF
+        // TODO: EPI EPE EqL EqC
 
         return this.devZLAN8308.toJsonNode(tm, data);
     }
