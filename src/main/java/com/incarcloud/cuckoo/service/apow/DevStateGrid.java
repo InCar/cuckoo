@@ -40,20 +40,59 @@ public class DevStateGrid implements IDev {
         data.put("pointUAndI", 0x0303);
         data.put("pointPQ", 0);
 
-        // UA UB UC
+        float[] fAC3 = new float[3];
         for(int i=0;i<tripleAC.length;i++){
-            var acPhase = tripleAC[i];
-            // 电压转成3位整数1位小数的定点数
-            data.put("U" + arrPhase[i], (int)acPhase.getVolatage()*10);
+            fAC3[i] = tripleAC[i].getVolatage();
         }
 
-        // TODO: UAB UBC UAC
-        // TODO: IA IB IC
-        // TODO: PA PB PC PTotal
-        // TODO: PFA PFB PFC PFTotal
-        // TODO: SA SB SC STotal
-        // TODO: rateF
-        // TODO: EPI EPE EqL EqC
+        // UA UB UC 相电压
+        for(int i=0;i<tripleAC.length;i++){
+            // 电压转成3位整数1位小数的定点数
+            data.put("U" + arrPhase[i], (int)fAC3[i]*10);
+        }
+        // UAB UBC UAC 线电压
+        data.put("UAB", (int)fAC3[0]*10*1.732f);
+        data.put("UBC", (int)fAC3[1]*10*1.732f);
+        data.put("UAC", (int)fAC3[2]*10*1.732f);
+
+        // IA IB IC
+        for(int i=0;i< tripleAC.length;i++){
+            var acPhase = tripleAC[i];
+            data.put("I" + arrPhase[i], (int)acPhase.getCurrent()*10);
+        }
+
+        // PA PB PC PTotal
+        data.put("PA", 0);
+        data.put("PB", 0);
+        data.put("PC", 0);
+        data.put("PTotal", 0);
+
+        // QA QB QC QTotal
+        data.put("QA", 0);
+        data.put("QB", 0);
+        data.put("QC", 0);
+        data.put("QTotal", 0);
+
+        // PFA PFB PFC PFTotal
+        data.put("PFA", 1000);
+        data.put("PFB", 1000);
+        data.put("PFC", 1000);
+        data.put("PFTotal", 1000);
+
+        // SA SB SC STotal
+        data.put("SA", 0);
+        data.put("SB", 0);
+        data.put("SC", 0);
+        data.put("STotal", 0);
+
+        // rateF
+        data.put("rateF", 5000);
+
+        // EPI EPE EqL EqC
+        data.put("EPI", 40000800);
+        data.put("EPE", 666480);
+        data.put("EqL", 0);
+        data.put("EqC", 2561340);
 
         return this.devZLAN8308.toJsonNode(tm, data);
     }
