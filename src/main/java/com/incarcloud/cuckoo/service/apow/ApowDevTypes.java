@@ -6,11 +6,14 @@ public enum ApowDevTypes {
     SmokeDetector(2), // 烟感
     Camera(3), // 摄像头
     ElectricMeter(10), // 电表
-    PhotoVoltaic(11), // 光伏
+    DCDC(11), // 直流变换器
     ACDC(12), // 逆变器
-    DCDC(13), // 直流变换器
-    Battery(14), // 电池
-    RemoteSwitch(15); // 遥控开关
+    Battery(13), // 电池
+    PhotoVoltaic(14), // 光伏
+    RemoteController(15), // 遥控
+    RemoteSwitch(16), // 遥控开关
+    AcCharger(17), // 交流充电桩
+    EV(18); // 电动汽车
 
     private final int value;
     ApowDevTypes(int value) {

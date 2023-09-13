@@ -37,6 +37,9 @@ public class SimSimpleApow implements ISim {
 
         DevBattery devBattery = new DevBattery("Battery001", "1", "Battery");
         listDev.add(devBattery);
+
+        DevPhotoVoltaic devPhotoVoltaic = new DevPhotoVoltaic("PhotoVoltaic001", "1", "inverter");
+        listDev.add(devPhotoVoltaic);
     }
 
     @Override
