@@ -11,8 +11,9 @@ class APX{
         return resp.data;
     }
 
-    public startApow = async ()=>{
-        const resp = await axios.put("/api/apow/start");
+    // speed: 数据包发送数率(包/秒)
+    public startApow = async (speed:number)=>{
+        const resp = await axios.put("/api/apow/start", {speed});
         return resp.data;
     }
 

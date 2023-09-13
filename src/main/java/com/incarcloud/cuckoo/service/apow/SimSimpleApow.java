@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // 以固定速率发送同样的数据
 public class SimSimpleApow implements ISim {
     private final static Logger s_logger = LoggerFactory.getLogger(SimSimpleApow.class);
-    private final float MAX_SPEED = 100.0f; // 每秒发送的数据包数
 
     private final ArrayList<IDev> listDev = new ArrayList<>();
     private final ApowSimArgs taskArgs;
@@ -92,14 +91,14 @@ public class SimSimpleApow implements ISim {
                 devIdx = (devIdx + 1) % listDev.size();
 
                 if(count % 100 == 0){
-                    float speed = MAX_SPEED;
+                    float speed = taskArgs.speed;
                     long markNow = 0;
-                    while(speed >= MAX_SPEED){
+                    while(speed >= taskArgs.speed){
                         markNow = System.nanoTime();
                         if(markNow <= markBegin) markNow = markBegin + 1; // 防止除0
                         speed = (count-countBegin) * 1.0e9f / (markNow - markBegin);
-                        if(speed >= MAX_SPEED) {
-                            float t = 1000.0f * 100.0f/MAX_SPEED;
+                        if(speed >= taskArgs.speed) {
+                            float t = 1000.0f * 100.0f/taskArgs.speed;
                             float sleepX = t - (markNow - markBegin)/1.0e6f;
                             Thread.sleep((int)sleepX);
                         }

@@ -17,6 +17,9 @@ export const Home = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const hasErrorMessage = React.useMemo(() => errorMessage !== "", [errorMessage]);
 
+    // 数据发送速度(包/秒)
+    const [speed, setSpeed] = useState(100.0);
+
     const txtValue:string[] = [];
 
     useEffect(() => {
@@ -42,7 +45,7 @@ export const Home = () => {
             const data = await apx.stopApow();
             setIsSwitchOnApow(data.isRunning);
         }else{
-            const data = await apx.startApow();
+            const data = await apx.startApow(speed);
             setIsSwitchOnApow(data.isRunning);
         }
     };
@@ -111,6 +114,14 @@ export const Home = () => {
                             <span>{errorMessage}</span>
                         </div>
                     }
+                </div>
+            }
+            {
+                activePanel === "APOW-MQTT" &&
+                <div className="apow">
+                    <div className="speed">
+                        <TextField id="speed" label="发送速度(包/秒)" variant="outlined" value={speed} onChange={(e)=>setSpeed(parseFloat(e.target.value))} />
+                    </div>
                 </div>
             }
             <div className="version">

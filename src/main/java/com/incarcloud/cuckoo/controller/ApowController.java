@@ -5,10 +5,7 @@ import com.incarcloud.cuckoo.dto.RunningState;
 import com.incarcloud.cuckoo.service.ApowSimArgs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.incarcloud.cuckoo.service.ApowService;
 
@@ -30,8 +27,8 @@ public class ApowController {
     }
 
     @PutMapping("/start")
-    public ResponseEntity<?> start() {
-        var args = new ApowSimArgs(this.mqttArgs);
+    public ResponseEntity<?> start(@RequestBody ApowRequest request){
+        var args = new ApowSimArgs(this.mqttArgs, request.speed);
 
         apowService.start(args);
         return this.getState();
@@ -43,4 +40,3 @@ public class ApowController {
         return this.getState();
     }
 }
-
