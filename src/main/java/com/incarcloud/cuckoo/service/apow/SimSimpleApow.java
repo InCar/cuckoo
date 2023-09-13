@@ -28,6 +28,15 @@ public class SimSimpleApow implements ISim {
         // DevZLAN8308 devZLAN8308 = new DevZLAN8308("ZLAN8308-1", ApowDevTypes.ElectricMeter, "1", "ZLAN8308");
         DevStateGrid devStateGrid = new DevStateGrid("Grid001", "1", "StateGrid");
         listDev.add(devStateGrid);
+
+        DevDCDC devDCDC = new DevDCDC("DCDC001", "1", "DCDC");
+        listDev.add(devDCDC);
+
+        DevACDC devACDC = new DevACDC("ACDC001", "1", "ACDC");
+        listDev.add(devACDC);
+
+        DevBattery devBattery = new DevBattery("Battery001", "1", "Battery");
+        listDev.add(devBattery);
     }
 
     @Override
@@ -64,18 +73,20 @@ public class SimSimpleApow implements ISim {
             // 用于测量发送速度
             long markBegin = System.nanoTime();
             int countBegin = count;
+            int devIdx = 0;
 
             while(!atomCanStop.get()){
                 count++;
                 if(count < 0) count = 0; // 避免长时间运行后溢出
 
                 Instant tm = Instant.now();
-                // TODO: modify
-                IDev devX = (IDev)listDev.get(0);
+                IDev devX = listDev.get(devIdx);
                 var buf = devX.makeDataPackage(tm);
+                // s_logger.info(new String(buf));
+                pahoV5.sendAsync(this.taskArgs.topic, buf);
 
-                s_logger.info(new String(buf));
-                // pahoV5.sendAsync(this.taskArgs.topic, buf);
+                // for next dev
+                devIdx = (devIdx + 1) % listDev.size();
 
                 if(count % 100 == 0){
                     float speed = MAX_SPEED;

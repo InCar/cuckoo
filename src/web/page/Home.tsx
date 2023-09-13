@@ -5,7 +5,7 @@ import "./home.scss";
 import { ScriptEditor } from "~/cmx/ScriptEditor";
 
 export const Home = () => {
-    const [activePanel, setActivePanel] = useState("IM2T-Kafka");
+    const [activePanel, setActivePanel] = useState("APOW-MQTT");
 
     const [isSwitchOnApow, setIsSwitchOnApow] = useState(false);
     const [isSwitchOnIm2t, setIsSwitchOnIm2t] = useState(false);
